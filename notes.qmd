@@ -1,0 +1,16 @@
+---
+title: 'Notes for StammZellTisch presentation about penalized regression'
+toc: true
+self-contained: true
+---
+
+* Uniform prior between +/- Inf is not a "proper" distribution -> the posterior is -- so it works effectively!
+* Regularization: prevents overfitting --> more simple, stable models --> shrinkage
+* Ridge regression: shrinkage, Lasso: variable selection
+* "maximum likelihood estimator" is the natural analog of "best linear unbiased estimator" in logistic regression, but without the “linear” or “unbiased” properties in a strict sense
+
+```{r}
+#| eval: false
+help(package = 'glmnet')
+```
+

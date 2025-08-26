@@ -1,0 +1,121 @@
+---
+title: "Stammzelltisch <br> -- <br> Penalized regression"
+subtitle: "2025-09-02"
+format: 
+    revealjs:
+        smaller: true
+        html-math-method: mathjax
+self-contained: true
+---
+
+## Consulting case
+* Predict diagnosis (yes / no) based on two questionnaires
+* $\approx$ 150 items, 200 participants
+* Goal: Identify most informative items and devise prediction model
+
+## Approach
+* Ordinary logistic regression performs quite bad due to collinearity
+  * Risk of overfitting
+* Remedy: penalty for large values for $\beta_j$
+$$
+Loss = NLL + Penalty
+$$
+NLL = negative log-likelihood --> corresponds to RSS (residual sum of squares)
+
+* Client used logistic lasso regression, hyperparameters optimized using cross-validation approach
+
+## 
+| Method | Loss function | Prior in Bayesian context |
+|:------:|:-------------:|:-------------------------:|
+| Ordinary least squares | $RSS$ | $p(\beta) \propto 1$|
+| Ridge regression | $RSS + \lambda \sum_{j=1}^{p} \beta_j^2$ | $\beta_j \sim \mathcal{N}(0, \tau^2)$ |
+| Lasso regression | $RSS + \lambda \sum_{j=1}^{p} \lvert \beta_j \rvert$ | $\beta_j \sim \text{Laplace}(0, b)$ |
+| Elastic net | $RSS + \lambda_1 \sum_{j=1}^p |\beta_j| + \lambda_2 \sum_{j=1}^p \beta_j^2$ | ? |
+
+## Normalize predictors
+* Penalization applies directly to the magnitude of the coefficients — and without standardization, variables on different scales are unfairly penalized
+* Standardize to e. g.: mean = 0, standard deviation = 1
+* Intercept should not be penalized --> corresponds to "mean outcome" then
+
+## Crossvalidation to determine $\lambda$
+* $\lambda$ for ridge and lasso regression, $\lambda_1$ and $\lambda_2$ for elastic net
+
+## Inference
+* Confidence intervals and p-values: 
+  * Problematic, but can be done (with bias)
+  * The concept does not fully align with frequentist statistics
+* In a bayesian contexts it works naturally
+[ChatGPT](https://chatgpt.com/s/t_68ad9754481881918cfe7d4844b13ae5)
+* Other approach
+  * Select variables with lasso regression (or elastic net) and return to ordinary regression then
+
+## Expected squared prediction error at a new point
+$$
+\mathbb{E} \left[ (y - \hat{f}(x))^2 \right] =
+\underbrace{\left( \mathbb{E}[\hat{f}(x)] - f(x) \right)^2}_{\text{Bias}^2} +
+\underbrace{\mathbb{E} \left[ \left( \hat{f}(x) - \mathbb{E}[\hat{f}(x)] \right)^2 \right]}_{\text{Variance}} +
+\underbrace{\sigma^2}_{\text{Irreducible Error}}
+$$
+
+* The expected squared prediction error may be smaller for penalized regression if
+  * $p$ large in comparison to $n$
+    * High-dimensional data
+    * Limited data
+  * Irreducible error is large (low signal-to-noise ratio)
+  * Presence of
+    * Multicollinearity
+    * Many irrelevant predictors
+
+## Variance-Bias Trade-off
+```{r}
+#| fig-width: 5
+#| fig-height: 5
+#| fig-align: 'center'
+set.seed(1)
+
+plot(0, 0, type = "n", xlim = c(-5, 5), ylim = c(-5, 5),
+     asp = 1, xlab = "", ylab = "", axes = FALSE)
+
+radii <- 1:4
+
+x <- y <- rep(0, length(radii))
+
+symbols(x, y, circles = radii, inches = FALSE, add = TRUE,
+        fg = "black", lwd = 2)
+
+n <- 100
+points(0, 0, pch = 16)
+
+x1 <- rnorm(n, 0, 1.5)
+y1 <- rnorm(n, 0, 1.5)
+
+x2 <- rnorm(n, -0.8, 0.2)
+y2 <- rnorm(n, -0.5, 0.2)
+
+col_1 <- rgb(1, 0, 0, alpha = 0.5)
+col_2 <- rgb(0, 1, 0, alpha = 0.5)
+
+points(x1, y1, col = col_1)
+points(x2, y2, col = col_2)
+
+text(-4, 4, paste0('RSS = ', sum(x1^2 + y1^2) |> round(1)), col = rgb(1, 0, 0,))
+text(-4, 3.3, paste0('RSS = ', sum(x2^2 + y2^2) |> round(1)), col = rgb(0, 1, 0,))
+```
+
+## Hierarchical Bayes
+* Learn hyperparameters naturally from data in a Bayesian context
+  * [ChatGPT](https://chatgpt.com/s/t_68ad98ec688c81918a8085332d07004e)
+
+## Extensions
+* Group lasso, Adaptive lasso, smoothly clipped absolute deviation (SCAD), Horseshoe prior and more
+  * [Summary by ChatGPT](https://chatgpt.com/s/t_68ad955d84208191af66a07c8f631639)
+  
+## Discussion
+* [Full conversation with ChatGPT](https://chatgpt.com/share/68ad968a-9784-8013-98bc-478539f4cf19)
+
+## Additional
+
+## Prior for variance
+$$
+p(\sigma) \propto \frac{1}{\sigma}
+$$
