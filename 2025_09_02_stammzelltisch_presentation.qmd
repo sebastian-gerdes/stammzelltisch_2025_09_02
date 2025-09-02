@@ -8,6 +8,14 @@ format:
 self-contained: true
 ---
 
+## "Common" vs. "royal" problems
+* Sometimes ...
+  * ... we want to calculate something seemingly simple
+  * ... and end up with complicated expressions
+* Sometimes ...
+  * ... we want to calculate something where we expect a complicated solution
+  * ... and things cancel out nicely and we get an easy, "clean" solution
+
 ## Consulting case
 * Predict diagnosis (yes / no) based on two questionnaires
 * $\approx$ 150 items, 200 participants
@@ -54,23 +62,7 @@ $$
 [ChatGPT](https://chatgpt.com/s/t_68ad9754481881918cfe7d4844b13ae5)
 * Other approach
   * Select variables with lasso regression (or elastic net) and return to ordinary regression then
-
-## Expected squared prediction error at a new point
-$$
-\mathbb{E} \left[ (y - \hat{f}(x))^2 \right] =
-\underbrace{\left( \mathbb{E}[\hat{f}(x)] - f(x) \right)^2}_{\text{Bias}^2} +
-\underbrace{\mathbb{E} \left[ \left( \hat{f}(x) - \mathbb{E}[\hat{f}(x)] \right)^2 \right]}_{\text{Variance}} +
-\underbrace{\sigma^2}_{\text{Irreducible Error}}
-$$
-
-* The expected squared prediction error may be smaller for penalized regression if
-  * $p$ large in comparison to $n$
-    * High-dimensional data
-    * Limited data
-  * Irreducible error is large (low signal-to-noise ratio)
-  * Presence of
-    * Multicollinearity
-    * Many irrelevant predictors
+  
 
 ## Variance-Bias Trade-off
 ```{r}
@@ -108,20 +100,28 @@ text(-4, 4, paste0('RSS = ', sum(x1^2 + y1^2) |> round(1)), col = rgb(1, 0, 0,))
 text(-4, 3.3, paste0('RSS = ', sum(x2^2 + y2^2) |> round(1)), col = rgb(0, 1, 0,))
 ```
 
-## Hierarchical Bayes
-* Learn hyperparameters naturally from data in a Bayesian context
+## Expected squared prediction error at a new point
+$$
+\mathbb{E} \left[ (y - \hat{f}(x))^2 \right] =
+\underbrace{\left( \mathbb{E}[\hat{f}(x)] - f(x) \right)^2}_{\text{Bias}^2} +
+\underbrace{\mathbb{E} \left[ \left( \hat{f}(x) - \mathbb{E}[\hat{f}(x)] \right)^2 \right]}_{\text{Variance}} +
+\underbrace{\sigma^2}_{\text{Irreducible Error}}
+$$
+
+* The expected squared prediction error may be smaller for penalized regression if
+  * $p$ large in comparison to $n$
+    * High-dimensional data
+    * Limited data
+  * Irreducible error is large (low signal-to-noise ratio)
+  * Presence of
+    * Multicollinearity
+    * Many irrelevant predictors
+
+## Outlook and discussion
+* Extensions
+  * Group lasso, Adaptive lasso, smoothly clipped absolute deviation (SCAD), Horseshoe prior and more
+* Hierarchical Bayes
+  * Learn hyperparameters naturally from data in a Bayesian context
   * [ChatGPT](https://chatgpt.com/s/t_68ad98ec688c81918a8085332d07004e)
-
-## Extensions
-* Group lasso, Adaptive lasso, smoothly clipped absolute deviation (SCAD), Horseshoe prior and more
-  * [Summary by ChatGPT](https://chatgpt.com/s/t_68ad955d84208191af66a07c8f631639)
-  
-## Discussion
+* Hypothesis: The frequentist rejoices at the "royalness" of ridge and lasso regression, the Bayesian says: "For me it is always that simple" -- should we try more Bayesian methods?
 * [Full conversation with ChatGPT](https://chatgpt.com/share/68ad968a-9784-8013-98bc-478539f4cf19)
-
-## Additional
-
-## Prior for variance
-$$
-p(\sigma) \propto \frac{1}{\sigma}
-$$
