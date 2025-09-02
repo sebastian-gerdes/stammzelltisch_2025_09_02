@@ -12,25 +12,31 @@ self-contained: true
 * Predict diagnosis (yes / no) based on two questionnaires
 * $\approx$ 150 items, 200 participants
 * Goal: Identify most informative items and devise prediction model
-
-## Approach
-* Ordinary logistic regression performs quite bad due to collinearity
-  * Risk of overfitting
+* Ordinary logistic regression performs quite bad due to collinearity / overfitting
 * Remedy: penalty for large values for $\beta_j$
-$$
-Loss = NLL + Penalty
-$$
-NLL = negative log-likelihood --> corresponds to RSS (residual sum of squares)
 
+## Penalized regression
+$$
+Loss = \text{negative log-likelihood} + Penalty
+$$
+
+* negative log-likelihood (NLL) corresponds to residual sum of squares (RSS)
+* "Shrinkage", Variance-Bias-Tradeoff
 * Client used logistic lasso regression, hyperparameters optimized using cross-validation approach
 
 ## 
+
 | Method | Loss function | Prior in Bayesian context |
 |:------:|:-------------:|:-------------------------:|
 | Ordinary least squares | $RSS$ | $p(\beta) \propto 1$|
 | Ridge regression | $RSS + \lambda \sum_{j=1}^{p} \beta_j^2$ | $\beta_j \sim \mathcal{N}(0, \tau^2)$ |
 | Lasso regression | $RSS + \lambda \sum_{j=1}^{p} \lvert \beta_j \rvert$ | $\beta_j \sim \text{Laplace}(0, b)$ |
 | Elastic net | $RSS + \lambda_1 \sum_{j=1}^p |\beta_j| + \lambda_2 \sum_{j=1}^p \beta_j^2$ | ? |
+
+* Notation
+  * $y = X\beta + \epsilon$,  
+  * RSS = $\|y - X\beta\|^2$
+
 
 ## Normalize predictors
 * Penalization applies directly to the magnitude of the coefficients — and without standardization, variables on different scales are unfairly penalized
